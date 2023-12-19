@@ -1,9 +1,12 @@
-# Iterative-Transformers
-Skoltech NLA project on Iterative weight-sharing implementation of attention mechanisms
+# Anderson Accelerated (AA) Iterative-Transformers
+Skoltech NLA project on Iterative refinement implementation of attention mechanisms with AA
 
-We found out that the very same idea was used in ALBERT. Thus we aim to rebuild the same system and test the applicability and capabilities of weight-sharing.
+We found out that the similar idea was used in ALBERT and Alpha Fold. Thus we aim to rebuild the same system and test the applicability and capabilities of non-gradient transformers layers cycling.
 
 Tasks:
-- Reproduce ALBERT
-- Test different learning strategies
-- Bootstrap Anderson Acceleration for transformer blocks to make convergence faster
+- Implement non-gradient iterations over encoder layers of BERT.
+- Test different learning strategies:
+  * Last call updates
+  * Random call updates
+  * Evaluation's stage refinement at last layer
+- Bootstrap Anderson Acceleration inside of cycling
