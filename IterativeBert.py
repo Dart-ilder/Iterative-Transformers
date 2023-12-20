@@ -205,6 +205,7 @@ class BertEncoderOurLastUpdate(nn.Module):
         self.config = config
         self.layer = nn.ModuleList([BertLayer(config) for _ in range(config.num_hidden_layers)])
         self.gradient_checkpointing = False
+        self.anderson = AndersonAcceleration
 
     def forward(
         self,
@@ -236,18 +237,31 @@ class BertEncoderOurLastUpdate(nn.Module):
             
             # if i == len(self.layer) - 1 and not self.training:
             num_iter = torch.randint(N_cycles, (1, 1))
-            for i_cycle in range(num_iter):
-                with torch.no_grad():
-                    layer_outputs = layer_module(
-                        hidden_states,
-                        attention_mask,
-                        layer_head_mask,
-                        encoder_hidden_states,
-                        encoder_attention_mask,
-                        past_key_value,
-                        output_attentions,
-                    )
-                    hidden_states = layer_outputs[0]
+
+            args = [    
+              hidden_states,
+              attention_mask,
+              layer_head_mask,
+              encoder_hidden_states,
+              encoder_attention_mask,
+              past_key_value,
+              output_attentions
+            ]
+            with torch.no_grad():
+              hidden_states = anderson_acceleration(args, layer_module, num_iter)
+            # for i_cycle in range(num_iter):
+            #     with torch.no_grad():
+                    
+            #         layer_outputs = layer_module(
+            #             hidden_states,
+            #             attention_mask,
+            #             layer_head_mask,
+            #             encoder_hidden_states,
+            #             encoder_attention_mask,
+            #             past_key_value,
+            #             output_attentions,
+            #         )
+            #         hidden_states = layer_outputs[0]
                         
             layer_outputs = layer_module(
                         hidden_states,
